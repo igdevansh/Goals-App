@@ -33,7 +33,10 @@ export default function App() {
 
   const addGoal = () => {
     if (newGoal.trim() !== "") {
-      const updatedGoals = [...goals, { id: Date.now().toString(), text: newGoal, completed: false, date: new Date().toLocaleDateString() }];
+      const updatedGoals = [
+        { id: Date.now().toString(), text: newGoal, completed: false, date: new Date().toLocaleDateString('en-GB') },
+        ...goals
+      ];
       setGoals(updatedGoals);
       saveGoals(updatedGoals);
       setNewGoal("");
@@ -68,21 +71,28 @@ export default function App() {
       <FlatList
         data={goals}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.goalItem}>
-            <View style={styles.goalTextContainer}>
-              <Text style={[styles.goalText, item.completed && styles.completedGoal]}>
-                {item.text}
-              </Text>
-              <Text style={styles.goalDate}>Added on: {item.date}</Text>
+        renderItem={({ item, index }) => (
+          <View>
+            {(index === 0 || goals[index - 1].date !== item.date) && (
+              <View style={styles.dateSeparator}>
+                <Text style={styles.dateText}>{item.date}</Text>
+                <View style={styles.horizontalLine} />
+              </View>
+            )}
+            <View style={styles.goalItem}>
+              <View style={styles.goalTextContainer}>
+                <Text style={[styles.goalText, item.completed && styles.completedGoal]}>
+                  {item.text}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => toggleGoalCompletion(item.id)}>
+                {item.completed ? (
+                  <AntDesign name="checkcircle" size={24} color="green" />
+                ) : (
+                  <AntDesign name="closecircle" size={24} color="red" />
+                )}
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => toggleGoalCompletion(item.id)}>
-              {item.completed ? (
-                <AntDesign name="checkcircle" size={24} color="green" />
-              ) : (
-                <AntDesign name="closecircle" size={24} color="red" />
-              )}
-            </TouchableOpacity>
           </View>
         )}
       />
@@ -138,9 +148,19 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
     color: "gray",
   },
-  goalDate: {
-    color: "gray",
-    fontSize: 12,
-    marginTop: 2,
+  dateSeparator: {
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  dateText: {
+    color: "white",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 2,
+  },
+  horizontalLine: {
+    borderBottomColor: "white",
+    borderBottomWidth: 1,
+    marginVertical: 5,
   },
 });
