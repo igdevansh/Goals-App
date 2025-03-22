@@ -47,7 +47,6 @@ export default function App() {
     const updatedGoals = goals.map((goal) =>
       goal.id === id ? { ...goal, completed: !goal.completed } : goal
     );
-    updatedGoals.sort((a, b) => a.completed - b.completed); // Move completed goals to bottom
     setGoals(updatedGoals);
     saveGoals(updatedGoals);
   };
